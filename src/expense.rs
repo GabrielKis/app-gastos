@@ -15,7 +15,7 @@ struct CSVData {
     income: String,
     group: String,
     value: String,
-    currency: String,
+    division: String,
     from: String,
     to: String,
 }
@@ -28,7 +28,7 @@ struct CSVData {
 // Function to extract matched fields from the input string
 fn extract_fields(input: &str) -> Option<ExpenseData> {
     // Define the regular expression pattern
-    let re = Regex::new(r"^(\d{2}\s[A-Z]{3})\s(\S+)\s(\d{1,2},\d{2})$").unwrap();
+    let re = Regex::new(r"^(\d{2}\s[A-Z]{3})\s(.+)\s(\d{1,3},\d{2})$").unwrap();
 
     // Match the input string against the regular expression
     if let Some(captures) = re.captures(input) {
@@ -72,28 +72,28 @@ fn expense_to_csv(expense_data: &mut Vec<ExpenseData>) -> Vec<String> {
     let mut csv_data = CSVData::default();
     let mut csv_string: String;
     let mut csv_str_vector: Vec<String> = vec![];
-    csv_str_vector.push("Data,Descrição,Categoria,Custo,Moeda,Gabriel,Alice\n".to_string());
+    csv_str_vector.push("Data,Descrição,Categoria,Custo,Divide,Lice,Gabs\n".to_string());
 
     for expense in expense_data {
         csv_date_format(&mut csv_data, &expense.date, "2024");
         csv_data.income = expense.income.clone();
         csv_data.group = "Geral".to_string();
-        csv_data.value = expense.value.replace(",", ".").clone();
-        csv_data.currency = "BRL".to_string();
-        csv_data.from = format!("{}", csv_data.value);
-        csv_data.to = format!("-{}", csv_data.value);
+        csv_data.value = format!("\"{}\"", expense.value.clone());
+        csv_data.division = "\"0,5\"".to_string();
+        //csv_data.from = format!("{}", csv_data.value);
+        //csv_data.to = format!("-{}", csv_data.value);
 
         csv_string = format!("{},{},{},{},{},{},{}",
                             csv_data.date,
                             csv_data.income,
                             csv_data.group,
                             csv_data.value,
-                            csv_data.currency,
+                            csv_data.division,
                             csv_data.from,
                             csv_data.to
                         );
         csv_str_vector.push(csv_string.clone());
-        println!("{}", csv_string);
+        //println!("{}", csv_string);
     }
     return csv_str_vector;
 }
