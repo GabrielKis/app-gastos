@@ -2,3 +2,4 @@
 tests/
 target/
 .vscode/
+output/
