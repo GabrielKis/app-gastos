@@ -114,7 +114,7 @@ pub fn read_income_pdf(filename: &str, expense_data: &mut Vec<ExpenseData>) {
     // This function should read all PDF file and save the informations
     // on the "expense" struct on a vector.
 
-    // NOTE: handle errors when parsing the PDF
+    // TODO: handle errors when parsing the PDF
     let bytes = std::fs::read(filename).unwrap();
     let pdf_read_text = pdf_extract::extract_text_from_mem(&bytes).unwrap(); // TODO: handle errors on the read - use match
     for line in pdf_read_text.lines() {

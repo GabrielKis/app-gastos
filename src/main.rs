@@ -19,7 +19,7 @@ fn execute_conversion(pdf_filename: SharedString, csv_filename: SharedString) ->
     // check if csv path is valid (if not, create it)
     let csv_output_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("output").join("csv");
     match fs::create_dir_all(csv_output_path.clone()) {
-        Ok(a) => println!("{:?}", a), // Do nothing,
+        Ok(_) => {}, // Do nothing,
         Err(e) => return Err(format!("Não foi possível criar o diretório de saida do CSV: {}", e))
     }
 
@@ -37,15 +37,16 @@ fn execute_conversion(pdf_filename: SharedString, csv_filename: SharedString) ->
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
 
-    //let ui_handle = ui.as_weak();
+    let ui_handle = ui.as_weak();
     ui.on_converte_fatura(move |pdf_filename, csv_filename| {
 
+        let result_msg: String;
         match execute_conversion(pdf_filename, csv_filename) {
-            Ok(s) => println!("DEU CERTO: {}", s),
-            Err(s) => println!("Deu errado: {}", s),
+            Ok(s) => result_msg = format!("Sucesso: {}", s).to_string(),
+            Err(s) => result_msg = format!("Erro: {}", s).to_string(),
         }
-        //let ui = ui_handle.unwrap();
-        //ui.set_results(result.into());
+        let ui = ui_handle.unwrap();
+        ui.set_result_msg(result_msg.into());
     });
 
     ui.run()
