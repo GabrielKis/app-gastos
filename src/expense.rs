@@ -72,7 +72,7 @@ fn expense_to_csv(expense_data: &mut Vec<ExpenseData>) -> Vec<String> {
     let mut csv_data = CSVData::default();
     let mut csv_string: String;
     let mut csv_str_vector: Vec<String> = vec![];
-    csv_str_vector.push("Data,Descrição,Categoria,Custo,Divide,Lice,Gabs\n".to_string());
+    csv_str_vector.push("Data,Descrição,Categoria,Custo,Divide,Person_A,Person_B\n".to_string());
 
     for expense in expense_data {
         csv_date_format(&mut csv_data, &expense.date, "2024");
@@ -93,7 +93,6 @@ fn expense_to_csv(expense_data: &mut Vec<ExpenseData>) -> Vec<String> {
                             csv_data.to
                         );
         csv_str_vector.push(csv_string.clone());
-        //println!("{}", csv_string);
     }
     return csv_str_vector;
 }

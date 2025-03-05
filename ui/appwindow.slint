@@ -3,6 +3,7 @@ import { Button, VerticalBox, LineEdit } from "std-widgets.slint";
 export component AppWindow inherits Window {
     callback converte-fatura(string, string);
     in property <string> result_msg: "";
+    in property <string> execution_path: "";
 
     GridLayout {
         padding: 25px;
@@ -10,7 +11,7 @@ export component AppWindow inherits Window {
 
         Row {
             Text {
-                text: "Conversor de Fatura de PDF";
+                text: "PDF Invoice Converter";
                 font-size: 24px;
                 font-weight: 900;
                 vertical-alignment: center;
@@ -22,7 +23,7 @@ export component AppWindow inherits Window {
             GridLayout {
                 Row {
                     Text {
-                        text: "Arquivo da fatura PDF:";
+                        text: "PDF Invoice file:";
                         font-size: 16px;
                         font-weight: 400;
                         vertical-alignment: center;
@@ -31,8 +32,8 @@ export component AppWindow inherits Window {
                 }
                 Row {
                     pdf_filename := LineEdit {
-                        placeholder-text: "Caminho para arquivo PDF";
-                        text: "caminho do repo";
+                        placeholder-text: "PDF invoice file path";
+                        text: root.execution_path;
                         font-size: 16px;
                         horizontal-alignment: center;
                     }
@@ -44,7 +45,7 @@ export component AppWindow inherits Window {
             GridLayout {
                 Row {
                     Text {
-                        text: "Nome do arquivo de saida (CSV):";
+                        text: "Output file name (CSV):";
                         font-size: 16px;
                         font-weight: 400;
                         vertical-alignment: center;
@@ -53,7 +54,7 @@ export component AppWindow inherits Window {
                 }
                 Row {
                     csv_filename := LineEdit {
-                        placeholder-text: "Nome do arquivo CSV";
+                        placeholder-text: "CSV file name";
                         font-size: 16px;
                         horizontal-alignment: center;
                     }
@@ -63,7 +64,7 @@ export component AppWindow inherits Window {
         
         Row {
             Button {
-                text: "Converter";
+                text: "Convert";
                 height: 35px;
                 clicked => {converte-fatura(pdf-filename.text, csv-filename.text)}
             }
