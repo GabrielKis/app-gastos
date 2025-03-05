@@ -28,7 +28,7 @@ struct CSVData {
 // Function to extract matched fields from the input string
 fn extract_fields(input: &str) -> Option<ExpenseData> {
     // Define the regular expression pattern
-    let re = Regex::new(r"^(\d{2}\s[A-Z]{3})\s(.+)\s(\d{1,3},\d{2})$").unwrap();
+    let re = Regex::new(r"^(\d{2}\s[A-Z]{3})\s(.+)\sR\$\s(\d{1,3},\d{2})$").unwrap();
 
     // Match the input string against the regular expression
     if let Some(captures) = re.captures(input) {
