@@ -1,7 +1,10 @@
-import { Button, VerticalBox, LineEdit } from "std-widgets.slint";
+import { Button, VerticalBox, LineEdit , ComboBox } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     callback converte-fatura(string, string);
+    callback select-bank(string);
+    in-out property <string> selected-item: "Itau";
+    in-out property <[string]> items: ["Itau", "Nubank"];
     in property <string> result_msg: "";
     in property <string> execution_path: "";
 
@@ -16,6 +19,16 @@ export component AppWindow inherits Window {
                 font-weight: 900;
                 vertical-alignment: center;
                 horizontal-alignment: center;
+            }
+        }
+
+        VerticalBox {
+            ComboBox {
+                model: root.items;
+                //current-index: 1;
+                selected(value) => {
+                    root.select-bank(value);
+                }
             }
         }
 

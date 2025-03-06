@@ -2,6 +2,7 @@ mod expense;
 use std::path::Path;
 use std::fs;
 use std::env;
+use std::sync::{Arc, Mutex};
 
 use expense::PDFTypeFile;
 use slint::{format, SharedString};
@@ -37,15 +38,16 @@ fn execute_conversion(pdf_filename: SharedString, csv_filename: SharedString, pd
 }
 
 fn main() -> Result<(), slint::PlatformError> {
-    let ui = AppWindow::new()?;
+    let pdf_bill_type = Arc::new(Mutex::new(PDFTypeFile::ItauPdf));
 
+    let ui = AppWindow::new()?;
     let ui_handle = ui.as_weak();
+
+    let pdf_bill_type_clone_read = Arc::clone(&pdf_bill_type);
     // On button click, execute PDF conversion
     ui.on_converte_fatura(move |pdf_filename, csv_filename| {
-
         let result_msg: String;
-        let pdf_bill_type:PDFTypeFile = expense::PDFTypeFile::ItauPdf;
-
+        let pdf_bill_type = pdf_bill_type_clone_read.lock().unwrap();
         match execute_conversion(pdf_filename, csv_filename, &pdf_bill_type) {
             Ok(s) => result_msg = format!("Success: {}", s).to_string(),
             Err(s) => result_msg = format!("Error: {}", s).to_string(),
@@ -72,6 +74,20 @@ fn main() -> Result<(), slint::PlatformError> {
         Err(_) => String::new(),
     };
     ui.set_execution_path(path_string.into());
+
+    let pdf_bill_type_clone_mut = Arc::clone(&pdf_bill_type);
+    ui.on_select_bank(move |selected_item| {
+        // Access the `selected-item` property
+        // let selected_item = ui.get_selected_item();
+        let mut pdf_bill_type = pdf_bill_type_clone_mut.lock().unwrap();
+
+        let selected_item_str: &str = selected_item.as_str();
+        match selected_item_str {
+            "Itau" => *pdf_bill_type = expense::PDFTypeFile::ItauPdf,
+            "Nubank" => *pdf_bill_type = expense::PDFTypeFile::NubankPdf,
+            &_ => println!("ERROR SELECTING PDF BANK"),
+        }
+    });
 
     // Execute SLINT
     ui.run()

@@ -28,7 +28,7 @@ struct CSVData {
 const NUBANK_EXPENSE_REGEX: &str = r"^(\d{2}\s[A-Z]{3})\s(.+)\sR\$\s(\d{1,3},\d{2})$";
 const ITAU_EXPENSE_REGEX: &str = r"^(\d{2}\/\d{2})\s(.+?)\s(\d{1,3}(?:\.\d{3})*,\d{2})($|\s{1})";
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum PDFTypeFile {
     ItauPdf,
     NubankPdf,
