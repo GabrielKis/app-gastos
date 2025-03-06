@@ -97,7 +97,8 @@ fn expense_to_csv(expense_data: &mut Vec<ExpenseData>, pdf_type: &PDFTypeFile) -
         csv_data.group = "Geral".to_string();
         csv_data.value = format!("\"{}\"", expense.value.clone());
         csv_data.division = "\"0,5\"".to_string();
-        //csv_data.from = format!("{}", csv_data.value);
+        csv_data.from = "=D3*(1-E3)".to_string();
+        csv_data.to = "=D3*E3".to_string();
         //csv_data.to = format!("-{}", csv_data.value);
 
         csv_string = format!("{},{},{},{},{},{},{}",
