@@ -3,10 +3,11 @@ use std::path::Path;
 use std::fs;
 use std::env;
 
+use expense::PDFTypeFile;
 use slint::{format, SharedString};
 slint::include_modules!();
 
-fn execute_conversion(pdf_filename: SharedString, csv_filename: SharedString) -> Result<SharedString, SharedString> {
+fn execute_conversion(pdf_filename: SharedString, csv_filename: SharedString, pdf_file: &PDFTypeFile) -> Result<SharedString, SharedString> {
     // check if PDF File exists and is a file
     if !Path::new(pdf_filename.as_str()).is_file() {
         return Err(format!("PDF File not found: {}", pdf_filename));
@@ -29,8 +30,8 @@ fn execute_conversion(pdf_filename: SharedString, csv_filename: SharedString) ->
     let csv_expense_file_path = csv_expense_file_path_bind.to_str();
 
     let mut expenses_on_pdf: Vec<expense::ExpenseData> = Vec::new();
-    expense::read_income_pdf(&pdf_filename.as_str(), &mut expenses_on_pdf);
-    let _ = expense::convert_incomes_to_csv(&csv_expense_file_path.unwrap(), &mut expenses_on_pdf);
+    expense::read_income_pdf(&pdf_filename.as_str(), &mut expenses_on_pdf, pdf_file);
+    let _ = expense::convert_incomes_to_csv(&csv_expense_file_path.unwrap(), &mut expenses_on_pdf, pdf_file);
 
     Ok(format!("Output CSV File available on: {}", csv_expense_file_path.unwrap()))
 }
@@ -39,11 +40,13 @@ fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
 
     let ui_handle = ui.as_weak();
+    // On button click, execute PDF conversion
     ui.on_converte_fatura(move |pdf_filename, csv_filename| {
 
         let result_msg: String;
+        let pdf_bill_type:PDFTypeFile = expense::PDFTypeFile::ItauPdf;
 
-        match execute_conversion(pdf_filename, csv_filename) {
+        match execute_conversion(pdf_filename, csv_filename, &pdf_bill_type) {
             Ok(s) => result_msg = format!("Success: {}", s).to_string(),
             Err(s) => result_msg = format!("Error: {}", s).to_string(),
         }
@@ -51,6 +54,7 @@ fn main() -> Result<(), slint::PlatformError> {
         ui.set_result_msg(result_msg.into());
     });
 
+    // Set default file path
     let mut execution_path = match env::current_exe() {
         Ok(exe_path) => exe_path,
         Err(_) => std::path::PathBuf::new(),
@@ -67,7 +71,8 @@ fn main() -> Result<(), slint::PlatformError> {
         Ok(path) => path.to_string_lossy().to_string(),
         Err(_) => String::new(),
     };
-
     ui.set_execution_path(path_string.into());
+
+    // Execute SLINT
     ui.run()
 }
